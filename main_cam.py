@@ -62,7 +62,7 @@ while True:
     cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
     
     # Display the frame with detections
-    cv2.imshow("Detection", frame)
+    cv2.imshow("Detection Inlet", frame)
     
     # Press 'q' to exit the loop
     if cv2.waitKey(1) & 0xFF == ord('q'):
