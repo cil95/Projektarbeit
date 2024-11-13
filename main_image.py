@@ -1,12 +1,12 @@
 "Yolo ohne api von roboflow aber nur bilderkknunng keine webcam"
 from ultralytics import YOLO
 import cv2
-image = cv2.imread("inlet3.jpg")
+image = cv2.imread("./assets/inlet.jpeg")
 # Load the YOLO model
-model = YOLO("runs/detect/train2/weights/best.pt")
+model = YOLO("./runs/detect/train/weights/best.pt")
 
 # Run predictions on the image
-results = model.predict("inlet3.jpg")
+results = model.predict("./assets/inlet.jpeg")
 
 # Extract and print the bounding box data
 for result in results:
