@@ -4,9 +4,11 @@ from ultralytics import YOLO
 import cv2
 import time
 # Load the YOLO model
-model = YOLO("./runs/detect/train/weights/best.pt")
+#model = YOLO("./runs/detect/train/weights/best.pt") with 200 epochs
+model = YOLO("runs_300/train/weights/best.pt") # with 300 epochs
 
 # Initialize webcam
+# 1 = iphone; 0 = webcam
 cap = cv2.VideoCapture(0)
 
 # Check if the webcam is opened correctly
