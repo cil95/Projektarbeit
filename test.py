@@ -88,7 +88,6 @@ class CircleDetection:
             # Display FPS on the frame
             fps_text = f"FPS: {fps:.2f}"
             cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 255), 2)
-            cv2.putText(frame, f"{len(self.Circle_Coordinates)}", (100, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
             classes = ["inlet","inlet-circle", "inlet-circle-left", "inlet-circle-right", "inlet-above-left", "inlet-above-right", "inlet-below-left", "inlet-below-right"]
 
             if len(self.Circle_Coordinates) == 8 and all(circle in self.Circle_Coordinates for circle in classes):
