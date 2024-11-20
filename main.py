@@ -72,12 +72,10 @@ class CircleDetection:
             cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
             errorLabel = "Error: Failed to detect the circles in the image."
             try:
-                self.get_circle_coordinates(circle_list,self.Circle_Coordinates["inlet"])
-                for circle_class in self.Circle_Coordinates:
-                    if circle_class != "inlet":
-                        cv2.circle(frame, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                self.get_circle_coordinates(frame,circle_list,self.Circle_Coordinates["inlet"])
+
             except:
-                cv2.putText(frame, errorLabel, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 0, 0), 1)
+                cv2.putText(frame, errorLabel, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 0, 0), 1)
 
 
             # verify the detection of the circles            
@@ -99,12 +97,18 @@ class CircleDetection:
                 print(pose.rotation_vector)
                 print(pose.translation_vector)
             else:
-                cv2.putText(frame, "Pose Estimation Failed - key Error ", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
+                cv2.putText(frame, "Pose Estimation Failed - key Error ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
             cv2.imshow("Detection Circles Webcam",frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
         self.cap.release()
         cv2.destroyAllWindows()
+
+    def calculate_angle(self,point1,point2):
+        x1,y1 = point1
+        x2,y2 = point2
+        angle = np.arctan2(y2-y1,x2-x1)
+        return np.degrees(angle)
 
     def find_circle_center(self,circle_list):
         # first get the arithmetic values
@@ -152,14 +156,33 @@ class CircleDetection:
                 nearest_circle = circle
         return nearest_circle
     
-    def get_circle_coordinates(self,circle_list,inlet):
+    def get_circle_coordinates(self,image,circle_list,inlet):
+            # kamera kos
+            img_height,img_width = image.shape[:2]
+            center_image_x = img_width//2
+            center_image_y = img_height//2
+            cv2.line(image, (int(center_image_x), 0), (int(center_image_x), img_height), (0, 0, 255), 2)
+            cv2.line(image, (0, int(center_image_y)), (img_width, int(center_image_y)), (0, 0, 255), 2)
+
             inlet_x, inlet_y = inlet["x"], inlet["y"]
             inlet_width, inlet_height = inlet["width"], inlet["height"]
+            
+            # insert an arrow for location of inlet
+            if inlet_x < center_image_x and abs(inlet_x - center_image_x) >= 15:
+                cv2.arrowedLine(image, (center_image_x + 200,center_image_y), (center_image_x+100,center_image_y), (255, 0, 0), 10)
+            elif inlet_x > center_image_x and abs(inlet_x - center_image_x) >= 15:
+                cv2.arrowedLine(image, (center_image_x - 200,center_image_y), (center_image_x-100,center_image_y), (255, 0, 0), 10)
+            
+            if inlet_y < center_image_y and abs(inlet_y - center_image_y) >= 15:
+                cv2.arrowedLine(image, (center_image_x,center_image_y + 200), (center_image_x,center_image_y+100), (255, 0, 0), 10)
+            elif inlet_y > center_image_y and abs(inlet_y - center_image_y) >= 15:
+                cv2.arrowedLine(image, (center_image_x,center_image_y - 200), (center_image_x,center_image_y-100), (255, 0, 0), 10)
+                
 
             filtered_circle_list = []
             for circle in circle_list:
                 (x, y), radius = circle
-                if (inlet_x - (inlet_width / 2)) < x < (inlet_x + (inlet_width / 2)) and (inlet_y - (inlet_height / 2)) < y < (inlet_y + (inlet_height / 2)):
+                if (inlet_x - ((inlet_width+50) / 2)) < x < (inlet_x + ((inlet_width+50) / 2)) and (inlet_y - ((inlet_height+50) / 2)) < y < (inlet_y + ((inlet_height+50) / 2)):
                     filtered_circle_list.append(circle)
 
             circle_list = filtered_circle_list
@@ -193,10 +216,55 @@ class CircleDetection:
                             self.Circle_Coordinates["inlet-below-left"] = {"x": circle[0][0], "y": circle[0][1],"radius":circle[1]}
                         else:
                             self.Circle_Coordinates["inlet-below-right"] = {"x": circle[0][0], "y": circle[0][1],"radius":circle[1]}
-                
-            else:
-                print("Failed to get circle Coordinates.")
+            
+            for circle_class in self.Circle_Coordinates:
+                if circle_class != "inlet":
+                    cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
 
+            # when not every circle is detected
+            classes_circles = ["inlet","inlet-center","inlet-center-left","inlet-center-right","inlet-above-left","inlet-above-right","inlet-below-left","inlet-below-right"]
+            if not all(circle_class in self.Circle_Coordinates for circle_class in classes_circles):
+                # calculate the missing circles # center is always detected
+                missing_circles = [circle for circle in classes_circles if circle not in self.Circle_Coordinates.keys()]
+                for key in missing_circles:
+                    if key != "inlet":
+                        if key == "inlet-center":
+                            self.Circle_Coordinates[key]={"x":self.Circle_Coordinates["inlet"]["x"],"y":self.Circle_Coordinates["inlet"]["y"],"radius":14}
+                            print(f"Calculate the missing circle: {key}")
+                            cv2.circle(image, (self.Circle_Coordinates[key]["x"], self.Circle_Coordinates[key]["y"]), self.Circle_Coordinates[key]["radius"], (0, 255, 255), 2)
+                        if key == "inlet-center-left" and "inlet-center-right" in self.Circle_Coordinates.keys():
+                            dist_c_to_cr_x = abs(self.Circle_Coordinates["inlet-center"]["x"] - self.Circle_Coordinates["inlet-center-right"]["x"])
+                            self.Circle_Coordinates[key]={"x":self.Circle_Coordinates["inlet-center"]["x"]-dist_c_to_cr_x,"y":self.Circle_Coordinates["inlet-center-right"]["y"],"radius":self.Circle_Coordinates["inlet-center-right"]["radius"]}
+                            cv2.circle(image, (self.Circle_Coordinates[key]["x"], self.Circle_Coordinates[key]["y"]), self.Circle_Coordinates[key]["radius"], (0, 255, 255), 2)
+                            print(f"Calculate the missing circle: {key}")
+                        elif key == "inlet-center-right" and "inlet-center-left" in self.Circle_Coordinates.keys():
+                            dist_c_to_cl_x = abs(self.Circle_Coordinates["inlet-center"]["x"] - self.Circle_Coordinates["inlet-center-left"]["x"])
+                            self.Circle_Coordinates[key]={"x":self.Circle_Coordinates["inlet-center"]["x"]+dist_c_to_cl_x,"y":self.Circle_Coordinates["inlet-center-left"]["y"],"radius":self.Circle_Coordinates["inlet-center-left"]["radius"]}
+                            cv2.circle(image, (self.Circle_Coordinates[key]["x"], self.Circle_Coordinates[key]["y"]), self.Circle_Coordinates[key]["radius"], (0, 255, 255), 2)
+                            print(f"Calculate the missing circle: {key}")
+                        elif key == "inlet-above-left" and "inlet-above-right" in self.Circle_Coordinates.keys():
+                            dist_c_to_ar_x = abs(self.Circle_Coordinates["inlet-center"]["x"] - self.Circle_Coordinates["inlet-above-right"]["x"])
+                            self.Circle_Coordinates[key]={"x":self.Circle_Coordinates["inlet-center"]["x"]-dist_c_to_ar_x
+                                                ,"y":self.Circle_Coordinates["inlet-above-right"]["y"],"radius":self.Circle_Coordinates["inlet-above-right"]["radius"]}
+                            cv2.circle(image, (self.Circle_Coordinates[key]["x"], self.Circle_Coordinates[key]["y"]), self.Circle_Coordinates[key]["radius"], (0, 255, 255), 2)
+                            print(f"Calculate the missing circle: {key}")
+                        elif key == "inlet-above-right" and "inlet-above-left" in self.Circle_Coordinates.keys():
+                            dist_c_to_al_x = abs(self.Circle_Coordinates["inlet-center"]["x"] - self.Circle_Coordinates["inlet-above-left"]["x"])
+                            self.Circle_Coordinates[key]={"x":self.Circle_Coordinates["inlet-center"]["x"]+dist_c_to_al_x
+                                                ,"y":self.Circle_Coordinates["inlet-above-left"]["y"],"radius":self.Circle_Coordinates["inlet-above-left"]["radius"]}
+                            cv2.circle(image, (self.Circle_Coordinates[key]["x"], self.Circle_Coordinates[key]["y"]), self.Circle_Coordinates[key]["radius"], (0, 255, 255), 2)
+                            print(f"Calculate the missing circle: {key}")
+                        elif key == "inlet-below-left" and "inlet-below-right" in self.Circle_Coordinates.keys():
+                            dist_c_to_br_x = abs(self.Circle_Coordinates["inlet-center"]["x"] - self.Circle_Coordinates["inlet-below-right"]["x"])
+                            self.Circle_Coordinates[key]={"x":self.Circle_Coordinates["inlet-center"]["x"]-dist_c_to_br_x
+                                                ,"y":self.Circle_Coordinates["inlet-below-right"]["y"],"radius":self.Circle_Coordinates["inlet-below-right"]["radius"]}
+                            cv2.circle(image, (self.Circle_Coordinates[key]["x"], self.Circle_Coordinates[key]["y"]), self.Circle_Coordinates[key]["radius"], (0, 255, 255), 2)
+                            print(f"Calculate the missing circle: {key}")
+                        elif key == "inlet-below-right" and "inlet-below-left" in self.Circle_Coordinates.keys():
+                            dist_c_to_bl_x = abs(self.Circle_Coordinates["inlet-center"]["x"] - self.Circle_Coordinates["inlet-below-left"]["x"])
+                            self.Circle_Coordinates[key]={"x":self.Circle_Coordinates["inlet-center"]["x"]+dist_c_to_bl_x
+                                                ,"y":self.Circle_Coordinates["inlet-below-left"]["y"],"radius":self.Circle_Coordinates["inlet-below-left"]["radius"]}
+                            cv2.circle(image, (self.Circle_Coordinates[key]["x"], self.Circle_Coordinates[key]["y"]), self.Circle_Coordinates[key]["radius"], (0, 255, 255), 2)
     def detect_per_image(self):
         self.model = YOLO(self.model_path)
         results = self.model.predict(self.image)        # without confidence manifestation
@@ -220,10 +288,7 @@ class CircleDetection:
                     y = int(height / 2) + int(y1)
                     circle_list.append(((x,y),radius))
         try:
-            self.get_circle_coordinates(circle_list,self.Circle_Coordinates["inlet"])
-            for circle_class in self.Circle_Coordinates:
-                if circle_class != "inlet":
-                    cv2.circle(self.image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+            self.get_circle_coordinates(self.image,circle_list,self.Circle_Coordinates["inlet"])
         except Exception as e:
             print("Failed to detect the circles in the image. ERROR:",e)
         cv2.imshow("Detection Circles Image",self.image)
@@ -231,15 +296,26 @@ class CircleDetection:
 
 
 
-# Object Points in 3D | Maße aus Normblatt
+# # Object Points in 3D | Maße aus Normblatt
+# object_points = np.array([
+#         [0, 0, 0],          # PE (Mittelpunkt)
+#         [-16, 0, 0],        # Linker mittlerer Kreis
+#         [16, 0, 0],         # Rechter mittlerer Kreis
+#         [-8, 11.2, 0],      # Oberer linker Kreis
+#         [8, 11.2, 0],       # Oberer rechter Kreis
+#         [-8, -13.9, 0],     # Unterer linker Kreis
+#         [8, -13.9, 0]       # Unterer rechter Kreis
+#         ], dtype=np.float32)
+
+# Maße vom gebastelten inlet
 object_points = np.array([
         [0, 0, 0],          # PE (Mittelpunkt)
-        [-16, 0, 0],        # Linker mittlerer Kreis
-        [16, 0, 0],         # Rechter mittlerer Kreis
-        [-8, 11.2, 0],      # Oberer linker Kreis
-        [8, 11.2, 0],       # Oberer rechter Kreis
-        [-8, -13.9, 0],     # Unterer linker Kreis
-        [8, -13.9, 0]       # Unterer rechter Kreis
+        [-26, 0, 0],        # Linker mittlerer Kreis
+        [26, 0, 0],         # Rechter mittlerer Kreis
+        [-12, 18 ,0],      # Oberer linker Kreis
+        [12, 18, 0],       # Oberer rechter Kreis
+        [-13, -22, 0],     # Unterer linker Kreis
+        [13, -22, 0]       # Unterer rechter Kreis
         ], dtype=np.float32)
 
 # camera matrix internet ausgedaachte werte muss ich selber eigentlich kalibrieren
