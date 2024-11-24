@@ -54,7 +54,7 @@ class PoseEstimation:
         cv2.putText(self.camera_frame, "Abstand: " + str(euklidische_dist) + " mm", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         # Zeichnen des Koordinatensystems
-        self.draw_axes()
+        # self.draw_axes()
 
     def draw_axes(self):
         axis_length = 50  # Länge der Achsen in mm
