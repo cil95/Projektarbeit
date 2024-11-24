@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 8
+names: ['inlet', 'inlet-above-left', 'inlet-above-right', 'inlet-below-left', 'inlet-below-right', 'inlet-center', 'inlet-center-left', 'inlet-center-right']
+
+roboflow:
+  workspace: inletfinder
+  project: inletfinder-xfvr9
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/inletfinder/inletfinder-xfvr9/dataset/2
