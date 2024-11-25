@@ -313,17 +313,24 @@ object_points = np.array([
         [12, -22, 0]       # Unterer rechter Kreis
         ], dtype=np.float32)
 
-# camera matrix internet ausgedaachte werte muss ich selber eigentlich kalibrieren
+# # camera matrix webcam 
 camera_matrix = np.array([
-    [800, 0, 320],
-    [0, 800, 240],
-    [0, 0, 1]
+    [2.10965926e+03, 0, 9.48821286e+02],
+    [0, 1.99932864e+03, 5.93297103e+02],
+    [0, 0, 1.00000000e+00]
 ], dtype=np.float32)
+
+# # camera matrix Iphone 14 plus 
+# camera_matrix = np.array([
+#     [1.23769211e+03, 0, 4.35258529e+02],
+#     [0, 1.30550723e+03, 9.02925725e+02],
+#     [0, 0, 1.00000000e+00]
+# ], dtype=np.float32)
 
 
 # Keine Verzerrung der Kamera
 dist_coeffs = np.zeros(4)  # Keine Verzerrung
 
 
-CircleDetection(model_path="runs_300_rotation/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.2,
+CircleDetection(model_path="runs_300/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.4,
                 object_points=object_points,camera_matrix=camera_matrix,dist_coeffs=dist_coeffs) #  model with 300 epocs
