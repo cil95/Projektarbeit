@@ -332,5 +332,5 @@ camera_matrix = np.array([
 dist_coeffs = np.zeros(4)  # Keine Verzerrung
 
 
-CircleDetection(model_path="runs_300/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.4,
+CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.4,
                 object_points=object_points,camera_matrix=camera_matrix,dist_coeffs=dist_coeffs) #  model with 300 epocs
