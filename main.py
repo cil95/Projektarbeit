@@ -313,24 +313,33 @@ object_points = np.array([
         [12, -22, 0]       # Unterer rechter Kreis
         ], dtype=np.float32)
 
-# # camera matrix webcam 
-camera_matrix = np.array([
-    [2.10965926e+03, 0, 9.48821286e+02],
-    [0, 1.99932864e+03, 5.93297103e+02],
-    [0, 0, 1.00000000e+00]
-], dtype=np.float32)
-
-# # camera matrix Iphone 14 plus 
+# # camera matrix webcam with camera_calibration.py
 # camera_matrix = np.array([
-#     [1.23769211e+03, 0, 4.35258529e+02],
-#     [0, 1.30550723e+03, 9.02925725e+02],
+#     [2.10965926e+03, 0, 9.48821286e+02],
+#     [0, 1.99932864e+03, 5.93297103e+02],
 #     [0, 0, 1.00000000e+00]
 # ], dtype=np.float32)
 
+# camera matrix Iphone 14 plus with camera_cailbration.py
+camera_matrix = np.array([
+    [1.23769211e+03, 0, 4.35258529e+02],
+    [0, 1.30550723e+03, 9.02925725e+02],
+    [0, 0, 1.00000000e+00]
+], dtype=np.float32)
 
-# Keine Verzerrung der Kamera
+
+# # Keine Verzerrung der Kamera
 dist_coeffs = np.zeros(4)  # Keine Verzerrung
 
+# camera matrix iphone 14 plus with cam_calib2.py
+# camera_matrix = np.array([
+#     [1.33428991e+03, 0.00000000e+00, 5.11650438e+02],
+#     [0.00000000e+00, 1.40249336e+03, 8.38529347e+02],
+#     [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]
+# ], dtype=np.float32)
 
-CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.4,
+# Keine Verzerrung der Kamera iphone 14 plus with cam_calib2.py
+#dist_coeffs = np.array([0.24997259, -0.15806372, 0.00072542, 0.05064744, -0.40992203], dtype=np.float32)
+
+CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=0,predict_conf=0.4,
                 object_points=object_points,camera_matrix=camera_matrix,dist_coeffs=dist_coeffs) #  model with 300 epocs
