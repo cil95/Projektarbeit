@@ -218,47 +218,53 @@ class CircleDetection:
                             self.Circle_Coordinates["inlet-below-right"] = {"x": circle[0][0], "y": circle[0][1],"radius":circle[1]}
             
             for circle_class in self.Circle_Coordinates:
-                inlet_center_point = (self.Circle_Coordinates["inlet-center"]["x"],self.Circle_Coordinates["inlet-center"]["y"])
+                # inlet_center_point = (self.Circle_Coordinates["inlet-center"]["x"],self.Circle_Coordinates["inlet-center"]["y"])
                 if circle_class != "inlet":
                     cv2.putText(image, circle_class, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                 # validate Coordinates
                 elif circle_class == "inlet-center-right":
-                    inlet_center_right = (self.Circle_Coordinates["inlet-center-right"]["x"],self.Circle_Coordinates["inlet-center-right"]["y"])
-                    angle = self.calculate_angle(inlet_center_point,inlet_center_right)
-                    self.Circle_Coordinates[circle_class]["angle"] = angle
-                    if angle > 175 and angle < 185:
-                        cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    # inlet_center_right = (self.Circle_Coordinates["inlet-center-right"]["x"],self.Circle_Coordinates["inlet-center-right"]["y"])
+                    # angle = self.calculate_angle(inlet_center_point,inlet_center_right)
+                    # self.Circle_Coordinates[circle_class]["angle"] = angle
+                    # if angle > 175 and angle < 185:
+                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                 elif circle_class == "inlet-center-left":
-                    inlet_center_left = (self.Circle_Coordinates["inlet-center-left"]["x"],self.Circle_Coordinates["inlet-center-left"]["y"])
-                    angle = self.calculate_angle(inlet_center_point,inlet_center_left)
-                    self.Circle_Coordinates[circle_class]["angle"] = angle
-                    if angle >-5 and angle < 5:
-                        cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    # inlet_center_left = (self.Circle_Coordinates["inlet-center-left"]["x"],self.Circle_Coordinates["inlet-center-left"]["y"])
+                    # angle = self.calculate_angle(inlet_center_point,inlet_center_left)
+                    # self.Circle_Coordinates[circle_class]["angle"] = angle
+                    # if angle >-5 and angle < 5:
+                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                 elif circle_class == "inlet-above-left":
-                    inlet_above_left = (self.Circle_Coordinates["inlet-above-left"]["x"],self.Circle_Coordinates["inlet-above-left"]["y"])
-                    angle = self.calculate_angle(inlet_center_point,inlet_above_left)
-                    self.Circle_Coordinates[circle_class]["angle"] = angle
-                    if angle > 50 and angle < 57:
-                        cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    # inlet_above_left = (self.Circle_Coordinates["inlet-above-left"]["x"],self.Circle_Coordinates["inlet-above-left"]["y"])
+                    # angle = self.calculate_angle(inlet_center_point,inlet_above_left)
+                    # self.Circle_Coordinates[circle_class]["angle"] = angle
+                    # if angle > 50 and angle < 57:
+                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                 elif circle_class == "inlet-above-right":
-                    inlet_above_right = (self.Circle_Coordinates["inlet-above-right"]["x"],self.Circle_Coordinates["inlet-above-right"]["y"])
-                    angle = self.calculate_angle(inlet_center_point,inlet_above_right)
-                    self.Circle_Coordinates[circle_class]["angle"] = angle
-                    if angle > 120 and angle < 130:
-                        cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    # inlet_above_right = (self.Circle_Coordinates["inlet-above-right"]["x"],self.Circle_Coordinates["inlet-above-right"]["y"])
+                    # angle = self.calculate_angle(inlet_center_point,inlet_above_right)
+                    # self.Circle_Coordinates[circle_class]["angle"] = angle
+                    # if angle > 120 and angle < 130:
+                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                 elif circle_class == "inlet-below-left":
-                    inlet_below_left = (self.Circle_Coordinates["inlet-below-left"]["x"],self.Circle_Coordinates["inlet-below-left"]["y"])
-                    angle = self.calculate_angle(inlet_center_point,inlet_below_left)
-                    self.Circle_Coordinates[circle_class]["angle"] = angle
-                    if angle > -55 and angle < -65:
-                        cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    # inlet_below_left = (self.Circle_Coordinates["inlet-below-left"]["x"],self.Circle_Coordinates["inlet-below-left"]["y"])
+                    # angle = self.calculate_angle(inlet_center_point,inlet_below_left)
+                    # self.Circle_Coordinates[circle_class]["angle"] = angle
+                    # if angle > -55 and angle < -65:
+                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                 elif circle_class == "inlet-below-right":
-                    inlet_below_right = (self.Circle_Coordinates["inlet-below-right"]["x"],self.Circle_Coordinates["inlet-below-right"]["y"])
-                    angle = self.calculate_angle(inlet_center_point,inlet_below_right)
-                    self.Circle_Coordinates[circle_class]["angle"] = angle
-                    if angle > -115 and angle < -125:
-                        cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    # inlet_below_right = (self.Circle_Coordinates["inlet-below-right"]["x"],self.Circle_Coordinates["inlet-below-right"]["y"])
+                    # angle = self.calculate_angle(inlet_center_point,inlet_below_right)
+                    # self.Circle_Coordinates[circle_class]["angle"] = angle
+                    # if angle > -115 and angle < -125:
+                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                    cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
 
     def detect_per_image(self):
         self.model = YOLO(self.model_path)
@@ -291,17 +297,6 @@ class CircleDetection:
 
 
 
-# # Object Points in 3D | Maße aus Normblatt
-# object_points = np.array([
-#         [0, 0, 0],          # PE (Mittelpunkt)
-#         [-16, 0, 0],        # Linker mittlerer Kreis
-#         [16, 0, 0],         # Rechter mittlerer Kreis
-#         [-8, 11.2, 0],      # Oberer linker Kreis
-#         [8, 11.2, 0],       # Oberer rechter Kreis
-#         [-8, -13.9, 0],     # Unterer linker Kreis
-#         [8, -13.9, 0]       # Unterer rechter Kreis
-#         ], dtype=np.float32)
-
 # Maße vom gebastelten inlet
 object_points = np.array([
         [0, 0, 0],          # PE (Mittelpunkt)
@@ -313,11 +308,13 @@ object_points = np.array([
         [12, -22, 0]       # Unterer rechter Kreis
         ], dtype=np.float32)
 
-# # camera matrix webcam with camera_calibration.py
+
+# # cam matri webcam with cam_calib2.py
+
 # camera_matrix = np.array([
-#     [2.10965926e+03, 0, 9.48821286e+02],
-#     [0, 1.99932864e+03, 5.93297103e+02],
-#     [0, 0, 1.00000000e+00]
+#     [2.32008857e+03 ,0.00000000e+00, 7.72534913e+02],
+#     [0.00000000e+00, 2.18002164e+03, 5.55807543e+02],
+#     [0.00000000e+00 ,0.00000000e+00 ,1.00000000e+00]
 # ], dtype=np.float32)
 
 # camera matrix Iphone 14 plus with camera_cailbration.py
@@ -331,15 +328,6 @@ camera_matrix = np.array([
 # # Keine Verzerrung der Kamera
 dist_coeffs = np.zeros(4)  # Keine Verzerrung
 
-# camera matrix iphone 14 plus with cam_calib2.py
-# camera_matrix = np.array([
-#     [1.33428991e+03, 0.00000000e+00, 5.11650438e+02],
-#     [0.00000000e+00, 1.40249336e+03, 8.38529347e+02],
-#     [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]
-# ], dtype=np.float32)
 
-# Keine Verzerrung der Kamera iphone 14 plus with cam_calib2.py
-#dist_coeffs = np.array([0.24997259, -0.15806372, 0.00072542, 0.05064744, -0.40992203], dtype=np.float32)
-
-CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=0,predict_conf=0.4,
+CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.4,
                 object_points=object_points,camera_matrix=camera_matrix,dist_coeffs=dist_coeffs) #  model with 300 epocs

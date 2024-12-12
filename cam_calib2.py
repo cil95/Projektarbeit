@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 def calibrate(showPics=True):
     # Read Images
     root = os.getcwd()
-    calibrationDir = os.path.join(root, 'demoImages/calibration')
+    calibrationDir = os.path.join(root, 'demoImages/calibrationWebcam')
     imgPathList = glob.glob(os.path.join(calibrationDir, '*.jpg'))
 
     # Initialize
