@@ -111,7 +111,7 @@ class CircleDetection:
         return round(math.degrees(angle),2)
 
     def find_circle_center(self,circle_list):
-        # first get the arithmetic values
+        # first get the arithmetic values 
         length = len(circle_list)
         if length == 0:
             return None
@@ -309,24 +309,33 @@ object_points = np.array([
         ], dtype=np.float32)
 
 
-# # cam matri webcam with cam_calib2.py
-
+# # # cam matri webcam with cam_calib2.py & camera_calibration.py mit meiner anpassung habe die werte 8 und 9 
 # camera_matrix = np.array([
-#     [2.32008857e+03 ,0.00000000e+00, 7.72534913e+02],
-#     [0.00000000e+00, 2.18002164e+03, 5.55807543e+02],
-#     [0.00000000e+00 ,0.00000000e+00 ,1.00000000e+00]
+#     [1.66204734e+03, 0.00000000e+00, 8.03624167e+02],
+#     [0.00000000e+00 ,1.55685803e+03 ,9.99834516e+02],
+#     [0.00000000e+00 ,0.00000000e+00, 1.00000000e+00]
 # ], dtype=np.float32)
+# dist_coeffs = np.array([[-6.43966295e-01 , 2.72534430e+00  ,1.92185349e-02 ,-6.22578330e-03,-8.63802676e+00]], dtype=np.float32)  # Verzerrung
 
-# camera matrix Iphone 14 plus with camera_cailbration.py
+# # # cam matri webcam with cam_calib2.py & camera_calibration.py Abstandstoleranz -5mm
 camera_matrix = np.array([
-    [1.23769211e+03, 0, 4.35258529e+02],
-    [0, 1.30550723e+03, 9.02925725e+02],
-    [0, 0, 1.00000000e+00]
+    [1.69644377e+03 ,0.00000000e+00, 8.63741370e+02],
+    [0.00000000e+00 ,1.57304555e+03 ,3.02428920e+02],
+    [0.00000000e+00 ,0.00000000e+00 ,1.00000000e+00]
 ], dtype=np.float32)
+dist_coeffs = np.array([[0.20893676 ,-1.43184069 ,-0.00650914  ,0.04822016 , 1.61533819]], dtype=np.float32)  # Verzerrung
+
+
+# # # camera matrix Iphone 14 plus with camera_cailbration.py
+# # camera_matrix = np.array([
+# #     [1.23769211e+03, 0, 4.35258529e+02],
+# #     [0, 1.30550723e+03, 9.02925725e+02],
+# #     [0, 0, 1.00000000e+00]
+# # ], dtype=np.float32)
 
 
 # # Keine Verzerrung der Kamera
-dist_coeffs = np.zeros(4)  # Keine Verzerrung
+# dist_coeffs = np.zeros(4)  # Keine Verzerrung
 
 
 CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.4,
