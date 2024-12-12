@@ -47,11 +47,11 @@ class PoseEstimation:
         z_winkel = round(math.degrees(z_winkel))
 
         # Anzeige der Winkel und der euklidischen Distanz
-        cv2.putText(self.camera_frame, "Winkel x: " + str(x_winkel), (10, 350), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        cv2.putText(self.camera_frame, "Winkel y: " + str(y_winkel), (10, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        cv2.putText(self.camera_frame, "Winkel z: " + str(z_winkel), (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.putText(self.camera_frame, "Winkel x: " + str(x_winkel), (10, 350), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(self.camera_frame, "Winkel y: " + str(y_winkel), (10, 400), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(self.camera_frame, "Winkel z: " + str(z_winkel), (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         euklidische_dist = np.linalg.norm(self.translation_vector)
-        cv2.putText(self.camera_frame, "Abstand: " + str(euklidische_dist) + " mm", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.putText(self.camera_frame, "Abstand: " + str(euklidische_dist) + " mm", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         # Zeichnen des Koordinatensystems
         # self.draw_axes()
