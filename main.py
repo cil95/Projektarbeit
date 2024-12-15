@@ -18,6 +18,8 @@ class CircleDetection:
             if not self.cap.isOpened():
                 print(f"Error while opening camera. CAM_ID:{cam_id} not found.")
                 exit()
+            # self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+            # self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             self.detect_per_cam()
         elif recognize_mode == "image":
             self.image = cv2.imread(image_path)
@@ -80,6 +82,7 @@ class CircleDetection:
 
             # verify the detection of the circles            
             classes = ["inlet","inlet-center","inlet-center-left","inlet-center-right","inlet-above-left","inlet-above-right","inlet-below-left","inlet-below-right"]
+            # classes = ["inlet","inlet-center","inlet-center-left","inlet-center-right","inlet-above-left","inlet-above-right"]
             # Do the Pose Estimation
             if all(elem in self.Circle_Coordinates.keys() for elem in classes):
                 # set the imagepoints
@@ -216,54 +219,28 @@ class CircleDetection:
                             self.Circle_Coordinates["inlet-below-left"] = {"x": circle[0][0], "y": circle[0][1],"radius":circle[1]}
                         else:
                             self.Circle_Coordinates["inlet-below-right"] = {"x": circle[0][0], "y": circle[0][1],"radius":circle[1]}
-            
             for circle_class in self.Circle_Coordinates:
                 # inlet_center_point = (self.Circle_Coordinates["inlet-center"]["x"],self.Circle_Coordinates["inlet-center"]["y"])
                 if circle_class != "inlet":
                     cv2.putText(image, circle_class, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                 # validate Coordinates
-                elif circle_class == "inlet-center-right":
-                    # inlet_center_right = (self.Circle_Coordinates["inlet-center-right"]["x"],self.Circle_Coordinates["inlet-center-right"]["y"])
-                    # angle = self.calculate_angle(inlet_center_point,inlet_center_right)
-                    # self.Circle_Coordinates[circle_class]["angle"] = angle
-                    # if angle > 175 and angle < 185:
-                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                if circle_class == "inlet-center-right":
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
-                elif circle_class == "inlet-center-left":
-                    # inlet_center_left = (self.Circle_Coordinates["inlet-center-left"]["x"],self.Circle_Coordinates["inlet-center-left"]["y"])
-                    # angle = self.calculate_angle(inlet_center_point,inlet_center_left)
-                    # self.Circle_Coordinates[circle_class]["angle"] = angle
-                    # if angle >-5 and angle < 5:
-                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                if circle_class == "inlet-center-left":
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
-                elif circle_class == "inlet-above-left":
-                    # inlet_above_left = (self.Circle_Coordinates["inlet-above-left"]["x"],self.Circle_Coordinates["inlet-above-left"]["y"])
-                    # angle = self.calculate_angle(inlet_center_point,inlet_above_left)
-                    # self.Circle_Coordinates[circle_class]["angle"] = angle
-                    # if angle > 50 and angle < 57:
-                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                if circle_class == "inlet-above-left":
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
-                elif circle_class == "inlet-above-right":
-                    # inlet_above_right = (self.Circle_Coordinates["inlet-above-right"]["x"],self.Circle_Coordinates["inlet-above-right"]["y"])
-                    # angle = self.calculate_angle(inlet_center_point,inlet_above_right)
-                    # self.Circle_Coordinates[circle_class]["angle"] = angle
-                    # if angle > 120 and angle < 130:
-                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                if circle_class == "inlet-above-right":
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
-                elif circle_class == "inlet-below-left":
+                if circle_class == "inlet-below-left":
                     # inlet_below_left = (self.Circle_Coordinates["inlet-below-left"]["x"],self.Circle_Coordinates["inlet-below-left"]["y"])
                     # angle = self.calculate_angle(inlet_center_point,inlet_below_left)
                     # self.Circle_Coordinates[circle_class]["angle"] = angle
                     # if angle > -55 and angle < -65:
                     #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
-                elif circle_class == "inlet-below-right":
-                    # inlet_below_right = (self.Circle_Coordinates["inlet-below-right"]["x"],self.Circle_Coordinates["inlet-below-right"]["y"])
-                    # angle = self.calculate_angle(inlet_center_point,inlet_below_right)
-                    # self.Circle_Coordinates[circle_class]["angle"] = angle
-                    # if angle > -115 and angle < -125:
-                    #     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
+                if circle_class == "inlet-below-right":
                     cv2.circle(image, (self.Circle_Coordinates[circle_class]["x"], self.Circle_Coordinates[circle_class]["y"]), self.Circle_Coordinates[circle_class]["radius"], (0, 255, 125), 2)
 
     def detect_per_image(self):
@@ -323,6 +300,7 @@ camera_matrix = np.array([
     [0.00000000e+00 ,1.57304555e+03 ,3.02428920e+02],
     [0.00000000e+00 ,0.00000000e+00 ,1.00000000e+00]
 ], dtype=np.float32)
+
 dist_coeffs = np.array([[0.20893676 ,-1.43184069 ,-0.00650914  ,0.04822016 , 1.61533819]], dtype=np.float32)  # Verzerrung
 
 
