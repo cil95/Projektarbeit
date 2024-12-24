@@ -78,8 +78,6 @@ class CircleDetection:
               self.get_circle_coordinates(frame,circle_list,self.Circle_Coordinates["inlet"])
             except:
                 cv2.putText(frame, errorLabel, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 0, 0), 1)
-
-
             # verify the detection of the circles            
             classes = ["inlet","inlet-center","inlet-center-left","inlet-center-right","inlet-above-left","inlet-above-right","inlet-below-left","inlet-below-right"]
             # classes = ["inlet","inlet-center","inlet-center-left","inlet-center-right","inlet-above-left","inlet-above-right"]
@@ -316,5 +314,6 @@ dist_coeffs = np.array([[0.20893676 ,-1.43184069 ,-0.00650914  ,0.04822016 , 1.6
 # dist_coeffs = np.zeros(4)  # Keine Verzerrung
 
 
-CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=1,predict_conf=0.4,
-                object_points=object_points,camera_matrix=camera_matrix,dist_coeffs=dist_coeffs) #  model with 300 epocs
+CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=0,predict_conf=0.4,
+                object_points=object_points,camera_matrix=camera_matrix,dist_coeffs=dist_coeffs) 
+
