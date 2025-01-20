@@ -4,6 +4,8 @@ import cv2
 import time
 import numpy as np
 from pose_estimation import PoseEstimation
+import csv
+import os
 class CircleDetection:
     Circle_Coordinates = {} 
     def __init__(self,model_path="runs_300/train/weights/best.pt",recognize_mode="cam",cam_id=0,image_path=None,predict_conf=0.4, object_points=None,camera_matrix=None,dist_coeffs=None):
@@ -13,6 +15,9 @@ class CircleDetection:
         self.predict_conf = predict_conf
         self.model_path = model_path
         self.cam_id = cam_id
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        self.filename = f'pose_estimation_{timestamp}'
+        self.model_path_string = model_path.split("/")[0]
         if recognize_mode == "cam":
             self.cap = cv2.VideoCapture(cam_id)
             if not self.cap.isOpened():
@@ -32,13 +37,18 @@ class CircleDetection:
         self.model = YOLO(self.model_path)
         # fps calc
         prev_time = 0
-
+        
+        base_dir = "positions"
+        folder_path = os.path.join(base_dir, f"{self.model_path_string}/{self.filename}") # wenn das morgen nicht klappt dann nur self.filename rein statt dieses f"....
+        os.makedirs(folder_path)
+        with open(f"{folder_path}/{self.filename}.csv", mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['tx','ty','tz','rx','ry','rz', 'Distance', 'Angle X', 'Angle Y', 'Angle Z'])
         while True:
             ret, frame = self.cap.read()
             if not ret:
                 print("Error: Failed to capture image.")
                 break
-            
             curr_time = time.time()
             fps = 1 / (curr_time - prev_time)
             prev_time = curr_time
@@ -82,23 +92,39 @@ class CircleDetection:
             classes = ["inlet","inlet-center","inlet-center-left","inlet-center-right","inlet-above-left","inlet-above-right","inlet-below-left","inlet-below-right"]
             # classes = ["inlet","inlet-center","inlet-center-left","inlet-center-right","inlet-above-left","inlet-above-right"]
             # Do the Pose Estimation
-            if all(elem in self.Circle_Coordinates.keys() for elem in classes):
-                # set the imagepoints
-                self.image_points = np.array([
-                    [self.Circle_Coordinates["inlet-center"]["x"], self.Circle_Coordinates["inlet-center"]["y"]],          # PE (Mittelpunkt)
-                    [self.Circle_Coordinates["inlet-center-left"]["x"], self.Circle_Coordinates["inlet-center-left"]["y"]],          # Linker mittlerer Kreis
-                    [self.Circle_Coordinates["inlet-center-right"]["x"], self.Circle_Coordinates["inlet-center-right"]["y"]],         # Rechter mittlerer Kreis
-                    [self.Circle_Coordinates["inlet-above-left"]["x"], self.Circle_Coordinates["inlet-above-left"]["y"]],          # Oberer linker Kreis
-                    [self.Circle_Coordinates["inlet-above-right"]["x"], self.Circle_Coordinates["inlet-above-right"]["y"]],         # Oberer rechter Kreis
-                    [self.Circle_Coordinates["inlet-below-left"]["x"], self.Circle_Coordinates["inlet-below-left"]["y"]],         # Unterer linker Kreis
-                    [self.Circle_Coordinates["inlet-below-right"]["x"], self.Circle_Coordinates["inlet-below-right"]["y"]]         # Unterer rechter Kreis
-                ], dtype=np.float32)
 
-                pose = PoseEstimation(frame,self.object_points,self.camera_matrix,self.image_points,self.dist_coeffs,self.predict_conf,self.model_path,self.cam_id)
-                print(pose.rotation_vector)
-                print(pose.translation_vector)
-            else:
-                cv2.putText(frame, "Pose Estimation Failed - key Error ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
+
+            with open(f"{folder_path}/{self.filename}.csv", mode='a', newline='') as file:
+                writer = csv.writer(file)
+                if all(elem in self.Circle_Coordinates.keys() for elem in classes):
+                    # set the imagepoints
+                    self.image_points = np.array([
+                        [self.Circle_Coordinates["inlet-center"]["x"], self.Circle_Coordinates["inlet-center"]["y"]],          # PE (Mittelpunkt)
+                        [self.Circle_Coordinates["inlet-center-left"]["x"], self.Circle_Coordinates["inlet-center-left"]["y"]],          # Linker mittlerer Kreis
+                        [self.Circle_Coordinates["inlet-center-right"]["x"], self.Circle_Coordinates["inlet-center-right"]["y"]],         # Rechter mittlerer Kreis
+                        [self.Circle_Coordinates["inlet-above-left"]["x"], self.Circle_Coordinates["inlet-above-left"]["y"]],          # Oberer linker Kreis
+                        [self.Circle_Coordinates["inlet-above-right"]["x"], self.Circle_Coordinates["inlet-above-right"]["y"]],         # Oberer rechter Kreis
+                        [self.Circle_Coordinates["inlet-below-left"]["x"], self.Circle_Coordinates["inlet-below-left"]["y"]],         # Unterer linker Kreis
+                        [self.Circle_Coordinates["inlet-below-right"]["x"], self.Circle_Coordinates["inlet-below-right"]["y"]]         # Unterer rechter Kreis
+                    ], dtype=np.float32)
+
+                    pose = PoseEstimation(frame,self.object_points,self.camera_matrix,self.image_points,self.dist_coeffs,self.predict_conf,self.model_path,self.cam_id)
+                    tx,ty,tz = pose.translation_vector.ravel()
+                    rx,ry,rz = pose.rotation_vector.ravel()
+                    #writer.writerow([pose.rotation_vector.ravel(), pose.translation_vector.ravel(), pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
+                    writer.writerow([tx,ty,tz,rx,ry,rz, pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
+                    # screenshot machen
+                    screen_timestamp = time.strftime("%Y%m%d-%H%M%S")
+                    screen_name = f'{folder_path}/screenshot_{screen_timestamp}.png'
+                    # automatisch durchgehend screenshot das deaktivieren falls fps zu gering
+                    cv2.imwrite(screen_name, frame)
+                    # print(pose.rotation_vector)
+                    # print(pose.translation_vector)
+                else:
+                    cv2.putText(frame, "Pose Estimation Failed - key Error ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
+                    writer.writerow([ "err","err","err","err","err","err", "err", "err", "err", "err"])
+
+
             cv2.imshow("Detection Circles Webcam",frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -316,4 +342,5 @@ dist_coeffs = np.array([[0.20893676 ,-1.43184069 ,-0.00650914  ,0.04822016 , 1.6
 
 CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=0,predict_conf=0.4,
                 object_points=object_points,camera_matrix=camera_matrix,dist_coeffs=dist_coeffs) 
+
 
