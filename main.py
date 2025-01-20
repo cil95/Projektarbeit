@@ -43,7 +43,7 @@ class CircleDetection:
         os.makedirs(folder_path)
         with open(f"{folder_path}/{self.filename}.csv", mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['tx','ty','tz','rx','ry','rz', 'Distance', 'Angle X', 'Angle Y', 'Angle Z'])
+            writer.writerow(['timestamp','tx','ty','tz','rx','ry','rz', 'Distance', 'Angle X', 'Angle Y', 'Angle Z'])
         while True:
             ret, frame = self.cap.read()
             if not ret:
@@ -112,9 +112,12 @@ class CircleDetection:
                     tx,ty,tz = pose.translation_vector.ravel()
                     rx,ry,rz = pose.rotation_vector.ravel()
                     #writer.writerow([pose.rotation_vector.ravel(), pose.translation_vector.ravel(), pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
-                    writer.writerow([tx,ty,tz,rx,ry,rz, pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
                     # screenshot machen
                     screen_timestamp = time.strftime("%Y%m%d-%H%M%S")
+                    current_time = time.strftime("%H:%M:%S")
+                    milliseconds = int((time.time() % 1) * 1000)
+                    time_with_milliseconds = f"{current_time}:{milliseconds:03d}"
+                    writer.writerow([time_with_milliseconds,tx,ty,tz,rx,ry,rz, pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
                     screen_name = f'{folder_path}/screenshot_{screen_timestamp}.png'
                     # automatisch durchgehend screenshot das deaktivieren falls fps zu gering
                     cv2.imwrite(screen_name, frame)
@@ -122,7 +125,10 @@ class CircleDetection:
                     # print(pose.translation_vector)
                 else:
                     cv2.putText(frame, "Pose Estimation Failed - key Error ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
-                    writer.writerow([ "err","err","err","err","err","err", "err", "err", "err", "err"])
+                    current_time = time.strftime("%H:%M:%S")
+                    milliseconds = int((time.time() % 1) * 1000)
+                    time_with_milliseconds = f"{current_time}:{milliseconds:03d}"
+                    writer.writerow([ time_with_milliseconds,"err","err","err","err","err","err", "err", "err", "err", "err"])
 
 
             cv2.imshow("Detection Circles Webcam",frame)
