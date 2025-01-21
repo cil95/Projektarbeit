@@ -25,6 +25,8 @@ class CircleDetection:
                 exit()
             # self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
             # self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            # für fokus anpassung kamera ###############################################################
+            # self.cap.set(cv2.CAP_PROP_FOCUS,50)
             self.detect_per_cam()
         elif recognize_mode == "image":
             self.image = cv2.imread(image_path)
@@ -111,6 +113,10 @@ class CircleDetection:
                     pose = PoseEstimation(frame,self.object_points,self.camera_matrix,self.image_points,self.dist_coeffs,self.predict_conf,self.model_path,self.cam_id)
                     tx,ty,tz = pose.translation_vector.ravel()
                     rx,ry,rz = pose.rotation_vector.ravel()
+                    # transvektor und rotvektor ausgeschrieben zeichnen im bild ################################################################################### das wurde nicht ausprobiert
+                    cv2.putText(frame, f"tx:{round(tx,2)}, ty:{round(ty,2)}, tz:{round(tz,2)} ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
+                    cv2.putText(frame, f"rx:{round(rx,2)}, ry:{round(ry,2)}, tz:{round(rz,2)} ", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
+                    ###################################################################################################################################################
                     #writer.writerow([pose.rotation_vector.ravel(), pose.translation_vector.ravel(), pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
                     # screenshot machen
                     screen_timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -120,9 +126,12 @@ class CircleDetection:
                     writer.writerow([time_with_milliseconds,tx,ty,tz,rx,ry,rz, pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
                     screen_name = f'{folder_path}/screenshot_{screen_timestamp}.png'
                     # automatisch durchgehend screenshot das deaktivieren falls fps zu gering
-                    cv2.imwrite(screen_name, frame)
+                    # cv2.imwrite(screen_name, frame)
                     # print(pose.rotation_vector)
                     # print(pose.translation_vector)
+                    if cv2.waitKey(1) & 0xFF == ord('p'): # screenshot per knopfdruck
+                        cv2.imwrite(screen_name,frame)
+
                 else:
                     cv2.putText(frame, "Pose Estimation Failed - key Error ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
                     current_time = time.strftime("%H:%M:%S")
@@ -305,15 +314,15 @@ class CircleDetection:
 
 
 # Maße vom gebastelten inlet
-object_points = np.array([
-        [0, 0, 0],          # PE (Mittelpunkt)
-        [-26, 0, 0],        # Linker mittlerer Kreis
-        [26, 0, 0],         # Rechter mittlerer Kreis
-        [-8, 18 ,0],      # Oberer linker Kreis
-        [8, 18, 0],       # Oberer rechter Kreis
-        [-12, -22, 0],     # Unterer linker Kreis
-        [12, -22, 0]       # Unterer rechter Kreis
-        ], dtype=np.float32)
+#object_points = np.array([
+#        [0, 0, 0],          # PE (Mittelpunkt)
+#        [-26, 0, 0],        # Linker mittlerer Kreis
+#        [26, 0, 0],         # Rechter mittlerer Kreis
+#        [-8, 18 ,0],      # Oberer linker Kreis
+#        [8, 18, 0],       # Oberer rechter Kreis
+#        [-12, -22, 0],     # Unterer linker Kreis
+#        [12, -22, 0]       # Unterer rechter Kreis
+#        ], dtype=np.float32)
 
 
 # # # cam matri webcam with cam_calib2.py & camera_calibration.py mit meiner anpassung habe die werte 8 und 9 
@@ -325,25 +334,43 @@ object_points = np.array([
 # dist_coeffs = np.array([[-6.43966295e-01 , 2.72534430e+00  ,1.92185349e-02 ,-6.22578330e-03,-8.63802676e+00]], dtype=np.float32)  # Verzerrung
 
 # # # cam matri webcam with cam_calib2.py & camera_calibration.py Abstandstoleranz -5mm
+#camera_matrix = np.array([
+#    [1.69644377e+03 ,0.00000000e+00, 8.63741370e+02],
+#    [0.00000000e+00 ,1.57304555e+03 ,3.02428920e+02],
+#    [0.00000000e+00 ,0.00000000e+00 ,1.00000000e+00]
+#], dtype=np.float32)
+
+#dist_coeffs = np.array([[0.20893676 ,-1.43184069 ,-0.00650914  ,0.04822016 , 1.61533819]], dtype=np.float32)  # Verzerrung
+
+'''nachfolgende parameter sind für den versuch relevant davor war zuhause testing'''
+
+# Kreispunke inlet gemessen frederik
+object_points = np.array([
+        [0, 0, 0],          # PE (Mittelpunkt)
+        [(-0.016*1000), 0.000, 0],        # Linker mittlerer Kreis
+        [(0.016*1000), 0.000, 0],         # Rechter mittlerer Kreis
+        [(-0.008*1000), (0.0112*1000) ,0],      # Oberer linker Kreis
+        [(0.008*1000), (0.0112*1000), 0],       # Oberer rechter Kreis
+        [(-0.008*1000), (-0.0139*1000), 0],     # Unterer linker Kreis
+        [(0.008*1000), (-0.0139*1000), 0]       # Unterer rechter Kreis
+        ], dtype=np.float32)
+
+# KOS y Achse umkehren fängt normalerweise obe links an aber pose estimation fängt in mitte an geht nach unten
+object_points[:,1]=-object_points[:,1]
+#Kamera kalibrierung frederik
 camera_matrix = np.array([
-    [1.69644377e+03 ,0.00000000e+00, 8.63741370e+02],
-    [0.00000000e+00 ,1.57304555e+03 ,3.02428920e+02],
-    [0.00000000e+00 ,0.00000000e+00 ,1.00000000e+00]
+    [1457.7687511638437 ,0.0, 894.6534471080478],
+    [0.0 ,1458.81034460408 ,527.8712607763059],
+    [0.0 ,0.0 ,1.0]
 ], dtype=np.float32)
 
-dist_coeffs = np.array([[0.20893676 ,-1.43184069 ,-0.00650914  ,0.04822016 , 1.61533819]], dtype=np.float32)  # Verzerrung
+dist_coeffs = np.array([[0.08754443271596284 ,-0.2568464808009354 ,-0.007901816661683396  ,-0.007425116760746606 , 0.16573564912852254]], dtype=np.float32)  # Verzerrung
 
 
-# # # camera matrix Iphone 14 plus with camera_cailbration.py
-# # camera_matrix = np.array([
-# #     [1.23769211e+03, 0, 4.35258529e+02],
-# #     [0, 1.30550723e+03, 9.02925725e+02],
-# #     [0, 0, 1.00000000e+00]
-# # ], dtype=np.float32)
 
 
 # # Keine Verzerrung der Kamera
-# dist_coeffs = np.zeros(4)  # Keine Verzerrung
+#dist_coeffs = np.zeros(4)  # Keine Verzerrung
 
 
 CircleDetection(model_path="runs_300_rotation2/train/weights/best.pt",recognize_mode="cam",cam_id=0,predict_conf=0.4,

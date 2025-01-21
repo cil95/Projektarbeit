@@ -57,7 +57,7 @@ class PoseEstimation:
         cv2.putText(self.camera_frame, "Abstand: " + str(euklidische_dist) + " mm", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         # Zeichnen des Koordinatensystems
-        # self.draw_axes()
+        self.draw_axes()
 
     def draw_axes(self):
         axis_length = 50  # Länge der Achsen in mm
@@ -71,6 +71,13 @@ class PoseEstimation:
         # Projizieren der 3D-Achsenpunkte in das 2D-Bild
         image_points, _ = cv2.projectPoints(axis_points, self.rotation_vector, self.translation_vector, self.camera_matrix, self.dist_coeffs)
 
+
+        '''
+        Ursprung: Der Ursprung des Koordinatensystems befindet sich im Kameralinsen-Zentrum.
+        X-Achse: Die X-Achse verläuft horizontal nach rechts.
+        Y-Achse: Die Y-Achse verläuft vertikal nach unten.
+        Z-Achse: Die Z-Achse verläuft senkrecht zur Bildebene und zeigt nach vorne, weg von der Kamera.
+        '''
         # Zeichnen der Achsen
         origin = tuple(map(int, image_points[3].ravel()))
         x_axis = tuple(map(int, image_points[0].ravel()))
