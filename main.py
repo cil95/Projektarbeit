@@ -26,7 +26,8 @@ class CircleDetection:
             # self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
             # self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             # für fokus anpassung kamera ###############################################################
-            # self.cap.set(cv2.CAP_PROP_FOCUS,50)
+            self.cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+            self.cap.set(cv2.CAP_PROP_FOCUS,50)
             self.detect_per_cam()
         elif recognize_mode == "image":
             self.image = cv2.imread(image_path)
@@ -114,8 +115,8 @@ class CircleDetection:
                     tx,ty,tz = pose.translation_vector.ravel()
                     rx,ry,rz = pose.rotation_vector.ravel()
                     # transvektor und rotvektor ausgeschrieben zeichnen im bild ################################################################################### das wurde nicht ausprobiert
-                    cv2.putText(frame, f"tx:{round(tx,2)}, ty:{round(ty,2)}, tz:{round(tz,2)} ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
-                    cv2.putText(frame, f"rx:{round(rx,2)}, ry:{round(ry,2)}, tz:{round(rz,2)} ", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 255, 0), 1)
+                    cv2.putText(frame, f"tx:{round(tx,2)}, ty:{round(ty,2)}, tz:{round(tz,2)} ", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    cv2.putText(frame, f"rx:{round(rx,2)}, ry:{round(ry,2)}, rz:{round(rz,2)} ", (10, 140), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
                     ###################################################################################################################################################
                     #writer.writerow([pose.rotation_vector.ravel(), pose.translation_vector.ravel(), pose.distance, pose.x_deg, pose.y_deg, pose.z_deg])
                     # screenshot machen
